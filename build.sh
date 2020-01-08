@@ -30,7 +30,10 @@ fpm -s dir -t deb -n etcd \
     --before-install scripts/before-install.sh \
     --post-uninstall scripts/post-uninstall.sh \
     --deb-systemd lib/systemd/system/etcd.service \
-    usr etc
+    --deb-systemd-enable \
+    --no-deb-systemd-auto-start \
+    --no-deb-systemd-restart-after-upgrade \
+    usr etc 
 
 rm -f usr/bin/*
 
