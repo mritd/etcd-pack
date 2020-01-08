@@ -20,6 +20,7 @@ cp etcd-v${ETCD_VERSION}-linux-amd64/etcd* usr/bin
 rm -rf etcd-v${ETCD_VERSION}-linux-amd64
 
 echo "INFO: building deb package."
+rm -f *.deb
 fpm -s dir -t deb -n etcd \
     -v ${ETCD_VERSION} \
     --vendor "mritd <mritd@linux.com>" \
