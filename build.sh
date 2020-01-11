@@ -42,6 +42,7 @@ build_deb(){
         --deb-systemd-enable \
         --no-deb-systemd-auto-start \
         --no-deb-systemd-restart-after-upgrade \
+        --exclude */.gitignore \
         usr etc
     mv etcd*.deb dist
 }
