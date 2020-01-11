@@ -10,6 +10,6 @@ pre-release: all
 	ghr -u mritd -t ${GITHUB_RELEASE_TOKEN} -replace -recreate -prerelease --debug v${BUILD_VERSION} *.deb
 
 clean:
-	rm -rf *.deb *.tar.gz
+	rm -rf etcd*.deb etcd*.tar.gz
 
 .PHONY : all release pre-release clean
