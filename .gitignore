@@ -1,3 +1,2 @@
-usr/bin/*
+dist
 *.tar.gz
-*.deb
