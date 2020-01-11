@@ -1,6 +1,6 @@
 BUILD_VERSION   := $(shell cat version)
 
-all:
+all: clean
 	docker run --rm -it -v `pwd`:/etcd-deb mritd/fpm bash -c "cd /etcd-deb && bash ./build.sh"
 
 release: all
