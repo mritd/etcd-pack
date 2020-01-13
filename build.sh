@@ -37,7 +37,7 @@ build_deb(){
         --description "etcd - highly-available key value store" \
         --url https://github.com/coreos/etcd \
         --before-install scripts/before-install.sh \
-        --post-uninstall scripts/post-uninstall.sh \
+        --after-remove scripts/after-remove.sh \
         --deb-systemd lib/systemd/system/etcd.service \
         --deb-systemd-enable \
         --no-deb-systemd-auto-start \
