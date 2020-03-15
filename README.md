@@ -40,9 +40,10 @@ CA 证书默认有效期为 10 年，可通过修改 `etcd-gencert.json` 和 `et
 - Docker Image: mritd/fpm
 - Build Tool: make、fakeroot
 
-针对 etcd-deb 的 build 无需 Golang 环境和 fakerroot；其他环境准备好后 clone 本仓库源码然后执行 `make` 既可，
-编译过程会下载 etcd 指定版本的官方预编译二进制，然后通过 fpm 工具进行打包；如果需要编译 cfssl，请自行 clone
-[cloudflare/cfssl](https://github.com/cloudflare/cfssl) 仓库源码，然后执行 `make package-deb` 既可，cfssl 编译需要 fakeroot 以及 Golang 环境。
+针对 etcd-deb 的 build 无需 Golang 环境和 fakerroot；其他环境准备好后 clone 本仓库源码修改 `version` 文件内版本号
+然后执行 `make` 既可，编译过程会下载 etcd 指定版本的官方预编译二进制，然后通过 fpm 工具进行打包；如果需要编译 cfssl，
+请自行 clone [cloudflare/cfssl](https://github.com/cloudflare/cfssl) 仓库源码，然后执行 `make package-deb` 既可，
+cfssl 编译需要 fakeroot 以及 Golang 环境。
 
 ### 四、为何不使用 fpm 官方镜像
 
