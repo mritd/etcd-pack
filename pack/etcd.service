@@ -1,14 +1,13 @@
 [Unit]
 Description=etcd - highly-available key value store
-Documentation=https://github.com/coreos/etcd
+Documentation=https://etcd.io/docs/
 After=network.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/etcd/etcd.conf
 Type=notify
 User=etcd
-ExecStart=/usr/bin/etcd
+ExecStart=/usr/bin/etcd --config-file /etc/etcd/etcd.yaml
 Restart=on-failure
 RestartSec=10s
 
