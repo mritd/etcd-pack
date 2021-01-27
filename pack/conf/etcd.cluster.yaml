@@ -103,7 +103,7 @@ client-transport-security:
   cert-file: /etc/etcd/ssl/etcd.pem
 
   # Path to the client server TLS key file.
-  key-file: /etc/etcd/ssl/etcd.key
+  key-file: /etc/etcd/ssl/etcd-key.pem
 
   # Enable client cert authentication.
   client-cert-auth: true
@@ -119,7 +119,7 @@ peer-transport-security:
   cert-file: /etc/etcd/ssl/etcd.pem
 
   # Path to the peer server TLS key file.
-  key-file: /etc/etcd/ssl/etcd.key
+  key-file: /etc/etcd/ssl/etcd-key.pem
 
   # Enable peer client cert authentication.
   client-cert-auth: true
@@ -136,7 +136,7 @@ debug: false
 logger: zap
 
 # Specify 'stdout' or 'stderr' to skip journald logging even when running under systemd.
-log-outputs: [stdout]
+log-outputs: [systemd/journal]
 
 # Force to create a new one member cluster.
 force-new-cluster: false
