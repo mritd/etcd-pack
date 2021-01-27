@@ -122,21 +122,21 @@ case "${2}" in
         cat <<EOF
 
 NAME:
-   ${1} - Etcd Install Tool
+    ${1} - Etcd Install Tool
 
 USAGE:
-   ${1} command
+    ${1} command
 
 AUTHOR:
-   mritd <mritd@linux.com>
+    mritd <mritd@linux.com>
 
 COMMANDS:
-   install      Install Etcd to the system
-   uninstall    Uninstall Etcd and keeping the data directory
-   purge        Uninstall Etcd and remove the data directory
+    install      Install Etcd to the system
+    uninstall    Uninstall Etcd and keeping the data directory
+    purge        Uninstall Etcd and remove the data directory
 
 COPYRIGHT:
-   Copyright (c) $(date "+%Y") mritd, All rights reserved.
+    Copyright (c) $(date "+%Y") mritd, All rights reserved.
 EOF
         exit 0
         ;;
