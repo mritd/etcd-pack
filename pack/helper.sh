@@ -9,11 +9,11 @@ DATA_DIR="/var/lib/etcd"
 SYSTEMD_SERVICE="/lib/systemd/system/etcd.service"
 BACKUP_SUFFIX=$(date "+%Y%m%d%H%M%S")
 
-
 function install(){
     info "install etcd..."
     backup
     add_user
+
     info "copy files..."
     cp bin/etcd ${BIN_ETCD}
     cp bin/etcdctl ${BIN_ETCDCTL}
@@ -26,21 +26,25 @@ function install(){
 }
 
 function uninstall(){
-    warn "uninstall etcd..."
+    info "uninstall etcd..."
     systemctl stop ectd || true
     del_user
-    warn "remove files..."
+
+    info "remove files..."
     rm -f ${BIN_ETCD} ${BIN_ETCDCTL} ${SYSTEMD_SERVICE}
+
     info "systemd reload..."
     systemctl daemon-reload
 }
 
 function purge(){
-    warn "purge etcd..."
+    info "purge etcd..."
     systemctl stop ectd || true
     del_user
-    warn "remove files..."
+
+    info "remove files..."
     rm -rf ${BIN_ETCD} ${BIN_ETCDCTL} ${SYSTEMD_SERVICE} ${CONFIG_DIR} ${DATA_DIR}
+
     info "systemd reload..."
     systemctl daemon-reload
 }
@@ -83,7 +87,6 @@ function del_user(){
     fi
 }
 
-
 function fix_permissions(){
     info "fix permissions..."
     chmod 755 ${BIN_ETCD} ${BIN_ETCDCTL} ${CONFIG_DIR} ${DATA_DIR}
@@ -119,10 +122,10 @@ case "${2}" in
         cat <<EOF
 
 NAME:
-   $1 - Etcd Install Tool
+   ${1} - Etcd Install Tool
 
 USAGE:
-   $1 command
+   ${1} command
 
 AUTHOR:
    mritd <mritd@linux.com>
@@ -133,7 +136,7 @@ COMMANDS:
    purge        Uninstall Etcd and remove the data directory
 
 COPYRIGHT:
-   Copyright (c) 2021 mritd, All rights reserved.
+   Copyright (c) $(date "+%Y") mritd, All rights reserved.
 EOF
         exit 0
         ;;

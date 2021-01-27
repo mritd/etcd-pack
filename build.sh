@@ -3,6 +3,8 @@
 set -e
 
 VERSION=${1}
+MAKESELF_VERSION=${MAKESELF_VERSION:-"2.4.3"}
+MAKESELF_INSTALL_DIR=$(mktemp -d makeself.XXXXXX)
 
 check_version(){
     if [ -z "${VERSION}" ]; then
@@ -11,21 +13,21 @@ check_version(){
     fi
 }
 
+check_makeself(){
+    if ! command -v makeself.sh >/dev/null 2>&1; then
+        wget -q https://github.com/megastep/makeself/releases/download/release-${MAKESELF_VERSION}/makeself-${MAKESELF_VERSION}.run
+        bash makeself-${MAKESELF_VERSION}.run --target ${MAKESELF_INSTALL_DIR}
+        export PATH=${MAKESELF_INSTALL_DIR}:${PATH}
+    fi
+}
+
 download(){
     info "downloading etcd precompiled binary."
-    wget https://github.com/coreos/etcd/releases/download/v${VERSION}/etcd-v${VERSION}-linux-amd64.tar.gz
+    wget -q https://github.com/coreos/etcd/releases/download/v${VERSION}/etcd-v${VERSION}-linux-amd64.tar.gz
 
     info "extract the files."
     tar -zxf etcd-v${VERSION}-linux-amd64.tar.gz
     cp etcd-v${VERSION}-linux-amd64/etcd* pack/bin/
-}
-
-pre_build(){
-    if ! command -v makeself.sh >/dev/null 2>&1; then
-        wget https://github.com/megastep/makeself/releases/download/release-2.4.3/makeself-2.4.3.run
-        bash makeself-2.4.3.run
-        export PATH=${PATH}:$(pwd)/makeself-2.4.3
-    fi
 }
 
 build(){
@@ -48,7 +50,7 @@ EOF
 
 clean(){
     info "clean files."
-    rm -rf pack/bin/* etcd-v${VERSION}-linux-amd64* makeself-2.4.3* LSM
+    rm -rf pack/bin/* etcd-v${VERSION}-linux-amd64* makeself* LSM
 }
 
 function info(){
@@ -64,8 +66,8 @@ function err(){
 }
 
 check_version
+check_makeself
 download
-pre_build
 build
 clean
 
