@@ -27,7 +27,7 @@ function install(){
 
 function uninstall(){
     info "uninstall etcd..."
-    systemctl stop ectd || true
+    systemctl stop etcd || true
     del_user
 
     info "remove files..."
@@ -39,7 +39,7 @@ function uninstall(){
 
 function purge(){
     info "purge etcd..."
-    systemctl stop ectd || true
+    systemctl stop etcd || true
     del_user
 
     info "remove files..."
