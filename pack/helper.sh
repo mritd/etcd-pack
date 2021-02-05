@@ -19,6 +19,7 @@ function install(){
     cp bin/etcdctl ${BIN_ETCDCTL}
     cp -r conf ${CONFIG_DIR}
     cp etcd.service ${SYSTEMD_SERVICE}
+    mkdir -p ${DATA_DIR}
     fix_permissions
 
     info "systemd reload..."
