@@ -9,7 +9,7 @@ MAKESELF_INSTALL_DIR=$(mktemp -d makeself.XXXXXX)
 check_version(){
     if [ -z "${VERSION}" ]; then
         warn "etcd version not specified, use default version 3.4.14."
-        VERSION="3.4.14"
+        VERSION="3.4.15"
     fi
 }
 
