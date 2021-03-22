@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 VERSION=${1}
+DEFAULT_VERSION="3.4.15"
 MAKESELF_VERSION=${MAKESELF_VERSION:-"2.4.3"}
 MAKESELF_INSTALL_DIR=$(mktemp -d makeself.XXXXXX)
 
 check_version(){
     if [ -z "${VERSION}" ]; then
-        warn "etcd version not specified, use default version 3.4.15."
-        VERSION="3.4.15"
+        warn "etcd version not specified, use default version ${DEFAULT_VERSION}."
+        VERSION="${DEFAULT_VERSION}"
     fi
 }
 
@@ -23,9 +24,7 @@ check_makeself(){
 
 download(){
     info "downloading etcd precompiled binary."
-    #wget -q https://github.com/coreos/etcd/releases/download/v${VERSION}/etcd-v${VERSION}-linux-amd64.tar.gz
-    # for 3.4.15, this is a temporary fix
-    wget -q https://github.com/alvistack/etcd-io-etcd/releases/download/v${VERSION}/etcd-v${VERSION}-linux-amd64.tar.gz
+    wget -q https://github.com/coreos/etcd/releases/download/v${VERSION}/etcd-v${VERSION}-linux-amd64.tar.gz
 
     info "extract the files."
     tar -zxf etcd-v${VERSION}-linux-amd64.tar.gz
