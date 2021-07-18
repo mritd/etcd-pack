@@ -4,6 +4,7 @@ set -e
 
 BIN_ETCD="/usr/bin/etcd"
 BIN_ETCDCTL="/usr/bin/etcdctl"
+BIN_ETCDUTL="/usr/bin/etcdutl"
 CONFIG_DIR="/etc/etcd"
 DATA_DIR="/var/lib/etcd"
 SYSTEMD_SERVICE="/lib/systemd/system/etcd.service"
@@ -17,6 +18,7 @@ function install(){
     info "copy files..."
     cp bin/etcd ${BIN_ETCD}
     cp bin/etcdctl ${BIN_ETCDCTL}
+    cp bin/etcdutl ${BIN_ETCDUTL}
     cp -r conf ${CONFIG_DIR}
     cp etcd.service ${SYSTEMD_SERVICE}
     mkdir -p ${DATA_DIR}
@@ -32,7 +34,7 @@ function uninstall(){
     del_user
 
     info "remove files..."
-    rm -f ${BIN_ETCD} ${BIN_ETCDCTL} ${SYSTEMD_SERVICE}
+    rm -f ${BIN_ETCD} ${BIN_ETCDCTL} ${BIN_ETCDUTL} ${SYSTEMD_SERVICE}
 
     info "systemd reload..."
     systemctl daemon-reload
@@ -44,7 +46,7 @@ function purge(){
     del_user
 
     info "remove files..."
-    rm -rf ${BIN_ETCD} ${BIN_ETCDCTL} ${SYSTEMD_SERVICE} ${CONFIG_DIR} ${DATA_DIR}
+    rm -rf ${BIN_ETCD} ${BIN_ETCDCTL} ${BIN_ETCDUTL} ${SYSTEMD_SERVICE} ${CONFIG_DIR} ${DATA_DIR}
 
     info "systemd reload..."
     systemctl daemon-reload
@@ -59,6 +61,10 @@ function backup(){
     if [ -f ${BIN_ETCDCTL} ]; then
         warn "backup ${BIN_ETCDCTL} to ${BIN_ETCDCTL}.${BACKUP_SUFFIX}..."
         mv ${BIN_ETCDCTL} ${BIN_ETCDCTL}.${BACKUP_SUFFIX}
+    fi
+    if [ -f ${BIN_ETCDUTL} ]; then
+        warn "backup ${BIN_ETCDUTL} to ${BIN_ETCDUTL}.${BACKUP_SUFFIX}..."
+        mv ${BIN_ETCDUTL} ${BIN_ETCDUTL}.${BACKUP_SUFFIX}
     fi
     if [ -f ${SYSTEMD_SERVICE} ]; then
         warn "backup ${SYSTEMD_SERVICE} to ${SYSTEMD_SERVICE}.${BACKUP_SUFFIX}..."
@@ -90,10 +96,10 @@ function del_user(){
 
 function fix_permissions(){
     info "fix permissions..."
-    chmod 755 ${BIN_ETCD} ${BIN_ETCDCTL} ${CONFIG_DIR} ${DATA_DIR}
+    chmod 755 ${BIN_ETCD} ${BIN_ETCDCTL} ${BIN_ETCDUTL} ${CONFIG_DIR} ${DATA_DIR}
     chmod 644 ${SYSTEMD_SERVICE}
 
-    chown -R etcd:etcd ${BIN_ETCD} ${BIN_ETCDCTL} ${CONFIG_DIR} ${DATA_DIR}
+    chown -R etcd:etcd ${BIN_ETCD} ${BIN_ETCDCTL} ${BIN_ETCDUTL} ${CONFIG_DIR} ${DATA_DIR}
     chown root:root ${SYSTEMD_SERVICE}
 }
 
