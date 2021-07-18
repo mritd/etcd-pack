@@ -28,10 +28,10 @@ quota-backend-bytes: 5368709120
 max-request-bytes: 10485760
 
 # List of comma separated URLs to listen on for peer traffic.
-listen-peer-urls: 'https://10.0.0.11:2380'
+listen-peer-urls: 'https://10.0.0.21:2380'
 
 # List of comma separated URLs to listen on for client traffic.
-listen-client-urls: 'https://10.0.0.11:2379,http://127.0.0.1:2379'
+listen-client-urls: 'https://10.0.0.21:2379,http://127.0.0.1:2379'
 
 # Maximum number of snapshot files to retain (0 is unlimited).
 max-snapshots: 10
@@ -44,11 +44,11 @@ cors:
 
 # List of this member's peer URLs to advertise to the rest of the cluster.
 # The URLs needed to be a comma-separated list.
-initial-advertise-peer-urls: 'https://10.0.0.11:2380'
+initial-advertise-peer-urls: 'https://10.0.0.21:2380'
 
 # List of this member's client URLs to advertise to the public.
 # The URLs needed to be a comma-separated list.
-advertise-client-urls: 'https://10.0.0.11:2379'
+advertise-client-urls: 'https://10.0.0.21:2379'
 
 # Discovery URL used to bootstrap the cluster.
 discovery:
@@ -63,7 +63,7 @@ discovery-proxy:
 discovery-srv:
 
 # Initial cluster configuration for bootstrapping.
-initial-cluster: 'etcd1=https://10.0.0.11:2380,etcd2=https://10.0.0.12:2380,etcd3=https://10.0.0.13:2380'
+initial-cluster: 'etcd1=https://10.0.0.21:2380,etcd2=https://10.0.0.22:2380,etcd3=https://10.0.0.23:2380'
 
 # Initial cluster token for the etcd cluster during bootstrap.
 initial-cluster-token: 'etcd-cluster'
