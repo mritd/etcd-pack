@@ -81,7 +81,7 @@ tasks:
 
   release:
     desc: Create GitHub release using gh CLI
-    deps: [build:all]
+    deps: [clean, build:all]
     cmds:
       - gh release create v{{.VERSION}} {{.DIST_DIR}}/packages/* --title "etcd {{.VERSION}}"
 
