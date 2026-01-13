@@ -1,0 +1,100 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  # Fetch latest version via GitHub API if not specified
+  VERSION:
+    sh: curl -fsSL https://api.github.com/repos/etcd-io/etcd/releases/latest | jq -r '.tag_name | ltrimstr("v")'
+  ARCHS: '{{.ARCHS | default "amd64 arm64"}}'
+  DIST_DIR: './dist'
+  ETCD_DOWNLOAD_URL: 'https://github.com/etcd-io/etcd/releases/download'
+  ETCD_RAW_URL: 'https://raw.githubusercontent.com/etcd-io/etcd'
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  download:
+    desc: Download etcd binaries and systemd service file
+    cmds:
+      - mkdir -p {{.DIST_DIR}}/bin {{.DIST_DIR}}/systemd
+      - for: { var: ARCHS, split: ' ' }
+        cmd: |
+          ARCH={{.ITEM}}
+          if [ -f {{.DIST_DIR}}/bin/$ARCH/etcd ]; then
+            echo "etcd binaries for $ARCH already exist, skipping..."
+          else
+            mkdir -p {{.DIST_DIR}}/bin/$ARCH
+            echo "Downloading etcd v{{.VERSION}} for $ARCH..."
+            curl -fsSL {{.ETCD_DOWNLOAD_URL}}/v{{.VERSION}}/etcd-v{{.VERSION}}-linux-$ARCH.tar.gz -o {{.DIST_DIR}}/etcd-v{{.VERSION}}-linux-$ARCH.tar.gz
+            tar -xzf {{.DIST_DIR}}/etcd-v{{.VERSION}}-linux-$ARCH.tar.gz -C {{.DIST_DIR}} --strip-components=1 --wildcards '*/etcd' '*/etcdctl' '*/etcdutl'
+            mv {{.DIST_DIR}}/etcd {{.DIST_DIR}}/etcdctl {{.DIST_DIR}}/etcdutl {{.DIST_DIR}}/bin/$ARCH/
+            rm -f {{.DIST_DIR}}/etcd-v{{.VERSION}}-linux-$ARCH.tar.gz
+          fi
+      - cmd: |
+          if [ -f {{.DIST_DIR}}/systemd/etcd.service ]; then
+            echo "etcd.service already exists, skipping..."
+          else
+            echo "Downloading etcd.service..."
+            curl -fsSL {{.ETCD_RAW_URL}}/v{{.VERSION}}/contrib/systemd/etcd.service -o {{.DIST_DIR}}/systemd/etcd.service
+          fi
+
+  build:
+    desc: Build deb packages for all architectures
+    deps: [download]
+    cmds:
+      - mkdir -p {{.DIST_DIR}}/packages
+      - for: { var: ARCHS, split: ' ' }
+        cmd: |
+          echo "Building deb package for {{.ITEM}}..."
+          sed 's/${ARCH}/{{.ITEM}}/g; s/${VERSION}/{{.VERSION}}/g' nfpm.yaml | nfpm package -p deb -f /dev/stdin -t {{.DIST_DIR}}/packages/
+
+  build:rpm:
+    desc: Build rpm packages for all architectures
+    deps: [download]
+    cmds:
+      - mkdir -p {{.DIST_DIR}}/packages
+      - for: { var: ARCHS, split: ' ' }
+        cmd: |
+          echo "Building rpm package for {{.ITEM}}..."
+          sed 's/${ARCH}/{{.ITEM}}/g; s/${VERSION}/{{.VERSION}}/g' nfpm.yaml | nfpm package -p rpm -f /dev/stdin -t {{.DIST_DIR}}/packages/
+
+  build:apk:
+    desc: Build apk packages for all architectures
+    deps: [download]
+    cmds:
+      - mkdir -p {{.DIST_DIR}}/packages
+      - for: { var: ARCHS, split: ' ' }
+        cmd: |
+          echo "Building apk package for {{.ITEM}}..."
+          sed 's/${ARCH}/{{.ITEM}}/g; s/${VERSION}/{{.VERSION}}/g' nfpm.yaml | nfpm package -p apk -f /dev/stdin -t {{.DIST_DIR}}/packages/
+
+  build:all:
+    desc: Build deb, rpm and apk packages for all architectures
+    cmds:
+      - task: build
+      - task: build:rpm
+      - task: build:apk
+
+  release:
+    desc: Create GitHub release using gh CLI
+    cmds:
+      - gh release create v{{.VERSION}} {{.DIST_DIR}}/packages/* --title "etcd {{.VERSION}}"
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -rf {{.DIST_DIR}}
+
+  check:upstream:
+    desc: Check latest etcd version from upstream
+    cmds:
+      - curl -fsSL https://api.github.com/repos/etcd-io/etcd/releases/latest | jq -r '.tag_name'
+
+  test:
+    desc: Run integration tests in Docker
+    cmds:
+      - ./scripts/integration-test.sh

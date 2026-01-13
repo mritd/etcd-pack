@@ -1,40 +1,86 @@
-## etcd-pack
+# etcd-pack
 
-> 本仓库为 etcd 二进制文件生安装包，方便在宿主机安装以及配置。
+Package etcd into deb/rpm using nFPM.
 
-### 一、使用
+## Requirements
 
-可直接从 [release](https://github.com/mritd/etcd-pack/releases) 页面下载对应版本安装包，然后执行 `etcd_*.run install` 既可安装。
+- curl
+- jq
+- [task](https://taskfile.dev)
+- [nfpm](https://nfpm.goreleaser.com)
 
-```sh
-➜ ./etcd_v3.4.14.run
-Verifying archive integrity...  100%   MD5 checksums are OK. All good.
-Uncompressing etcd - highly-available key value store  100%
+### Install dependencies (Debian/Ubuntu)
 
-NAME:
-    etcd_v3.4.14.run - Etcd Install Tool
+```bash
+# task
+sh -c "$(curl -fsSL https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
 
-USAGE:
-    etcd_v3.4.14.run command
-
-AUTHOR:
-    mritd <mritd@linux.com>
-
-COMMANDS:
-    install      Install Etcd to the system
-    uninstall    Uninstall Etcd and keeping the data directory
-    purge        Uninstall Etcd and remove the data directory
-
-COPYRIGHT:
-    Copyright (c) 2021 mritd, All rights reserved.
+# nfpm
+echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+sudo apt-get update && sudo apt-get install -y nfpm
 ```
 
-### 二、配置
+## Usage
 
-默认情况下，**安装包会释放 `/etc/etcd` 目录，该目录存放一些样例配置:**
+```bash
+# Build deb packages (latest etcd, amd64 + arm64)
+task build
 
-- etcd.cluster.yaml: 集群样例配置
-- etcd.single.yaml: 单点样例配置
-- etcd.yaml: 默认配置
+# Build specific version
+task build VERSION=3.5.16
 
-可自行修改相关配置来选择启动单点模式与集群模式。
+# Build single architecture
+task build ARCHS=amd64
+
+# Build rpm packages
+task build:rpm
+
+# Build apk packages
+task build:apk
+
+# Build all formats
+task build:all
+
+# Check upstream latest version
+task check:upstream
+
+# Create GitHub release
+task release
+
+# Clean build artifacts
+task clean
+```
+
+## Install etcd
+
+```bash
+# Install
+sudo apt install ./etcd_3.6.7_amd64.deb
+
+# Remove (keep config and data)
+sudo apt remove etcd
+
+# Purge (remove everything)
+sudo apt purge etcd
+```
+
+### RPM/APK purge
+
+```bash
+# rpm
+ETCD_PURGE=1 rpm -e etcd
+
+# apk
+ETCD_PURGE=1 apk del etcd
+```
+
+## Configuration
+
+- Default config: `/etc/etcd/etcd.yaml`
+- Cluster template: `/etc/etcd/etcd.cluster.yaml`
+- Data directory: `/var/lib/etcd/`
+- TLS certificates: `/etc/etcd/ssl/`
+
+## License
+
+Apache-2.0

@@ -1,0 +1,271 @@
+# =============================================================================
+# etcd Configuration - Cluster Template (3 Nodes)
+# etcd 配置 - 集群模板 (3 节点)
+# =============================================================================
+# Copy this file to /etc/etcd/etcd.yaml on each node and modify accordingly.
+# 将此文件复制到每个节点的 /etc/etcd/etcd.yaml 并根据实际情况修改.
+#
+# Required changes per node / 每个节点需要修改的配置:
+#   - name: etcd1, etcd2, etcd3
+#   - advertise-client-urls: node's IP
+#   - initial-advertise-peer-urls: node's IP
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Basic Settings / 基本设置
+# -----------------------------------------------------------------------------
+
+# Human-readable name for this member. Must be unique within the cluster.
+# 此成员的可读名称. 在集群中必须唯一.
+# Change: etcd1, etcd2, etcd3
+# 修改: etcd1, etcd2, etcd3
+name: 'etcd1'
+
+# Path to the data directory.
+# 数据目录路径.
+data-dir: '/var/lib/etcd'
+
+# Path to the dedicated wal directory.
+# 专用 WAL 目录路径.
+# Tip: Use a separate high-performance disk (SSD) for better write performance.
+# 提示: 使用独立的高性能磁盘 (SSD) 可显著提升写入性能.
+# wal-dir: '/var/lib/etcd/wal'
+
+# -----------------------------------------------------------------------------
+# Network Settings / 网络设置
+# -----------------------------------------------------------------------------
+
+# List of URLs to listen on for client traffic.
+# 监听客户端请求的 URL 列表.
+# Use 0.0.0.0 to listen on all interfaces.
+# 使用 0.0.0.0 监听所有网卡.
+listen-client-urls: 'https://0.0.0.0:2379'
+
+# List of this member's client URLs to advertise to the public.
+# 向外部公布的客户端 URL 列表.
+# Change: Replace with this node's IP address.
+# 修改: 替换为本节点的 IP 地址.
+advertise-client-urls: 'https://10.0.0.11:2379'
+
+# List of URLs to listen on for peer traffic.
+# 监听集群节点间通信的 URL 列表.
+listen-peer-urls: 'https://0.0.0.0:2380'
+
+# List of this member's peer URLs to advertise to the rest of the cluster.
+# 向集群其他节点公布的 URL 列表.
+# Change: Replace with this node's IP address.
+# 修改: 替换为本节点的 IP 地址.
+initial-advertise-peer-urls: 'https://10.0.0.11:2380'
+
+# -----------------------------------------------------------------------------
+# Cluster Settings / 集群设置
+# -----------------------------------------------------------------------------
+
+# Initial cluster configuration for bootstrapping.
+# 引导启动时的初始集群配置.
+# Format: name1=url1,name2=url2,name3=url3
+# 格式: 名称1=地址1,名称2=地址2,名称3=地址3
+initial-cluster: 'etcd1=https://10.0.0.11:2380,etcd2=https://10.0.0.12:2380,etcd3=https://10.0.0.13:2380'
+
+# Initial cluster token for the etcd cluster during bootstrap.
+# 引导启动时的集群令牌.
+# Use a unique token to prevent cross-cluster interaction.
+# 使用唯一令牌防止不同集群间的误操作.
+initial-cluster-token: 'etcd-cluster'
+
+# Initial cluster state ('new' or 'existing').
+# 初始集群状态.
+# - 'new': Bootstrap a new cluster.
+# - 'existing': Join an existing cluster.
+# - 'new': 引导新集群.
+# - 'existing': 加入现有集群.
+initial-cluster-state: 'new'
+
+# Reject reconfiguration requests that would cause quorum loss.
+# 拒绝可能导致仲裁丢失的重配置请求.
+strict-reconfig-check: true
+
+# Enable the Pre-Vote feature to minimize disruption from unreachable nodes.
+# 启用 Pre-Vote 功能, 减少不可达节点对集群的干扰.
+# Prevents disruptive elections when a partitioned node rejoins.
+# 防止分区节点重新加入时触发不必要的选举.
+pre-vote: true
+
+# -----------------------------------------------------------------------------
+# TLS - Client / TLS - 客户端
+# -----------------------------------------------------------------------------
+
+# Client-to-server TLS configuration.
+# 客户端到服务端的 TLS 配置.
+client-transport-security:
+  # Path to the client server TLS certificate file.
+  # 客户端服务 TLS 证书文件路径.
+  cert-file: '/etc/etcd/ssl/etcd.crt'
+
+  # Path to the client server TLS key file.
+  # 客户端服务 TLS 密钥文件路径.
+  key-file: '/etc/etcd/ssl/etcd.key'
+
+  # Path to the client server TLS trusted CA certificate file.
+  # 客户端服务 TLS 受信 CA 证书文件路径.
+  trusted-ca-file: '/etc/etcd/ssl/ca.crt'
+
+  # Enable client certificate authentication.
+  # 启用客户端证书认证 (双向 TLS).
+  client-cert-auth: true
+
+# -----------------------------------------------------------------------------
+# TLS - Peer / TLS - 节点间
+# -----------------------------------------------------------------------------
+
+# Peer-to-peer TLS configuration.
+# 节点间的 TLS 配置.
+peer-transport-security:
+  # Path to the peer server TLS certificate file.
+  # 节点间 TLS 证书文件路径.
+  cert-file: '/etc/etcd/ssl/etcd.crt'
+
+  # Path to the peer server TLS key file.
+  # 节点间 TLS 密钥文件路径.
+  key-file: '/etc/etcd/ssl/etcd.key'
+
+  # Path to the peer server TLS trusted CA certificate file.
+  # 节点间 TLS 受信 CA 证书文件路径.
+  trusted-ca-file: '/etc/etcd/ssl/ca.crt'
+
+  # Enable peer certificate authentication.
+  # 启用节点间证书认证.
+  client-cert-auth: true
+
+# Minimum TLS version for both client and peer connections.
+# 客户端和节点间连接的最低 TLS 版本.
+# Options: TLS1.2, TLS1.3
+# 选项: TLS1.2, TLS1.3
+# tls-min-version: 'TLS1.2'
+
+# -----------------------------------------------------------------------------
+# Storage Settings / 存储设置
+# -----------------------------------------------------------------------------
+
+# Maximum size of the backend database in bytes.
+# 后端数据库最大大小 (字节).
+# 8GB is recommended for production clusters.
+# 生产集群建议设置为 8GB.
+# When exceeded, etcd raises an alarm and rejects write requests.
+# 超过此限制时, etcd 会触发告警并拒绝写入请求.
+quota-backend-bytes: 8589934592
+
+# Maximum size of a request in bytes.
+# 单次请求的最大大小 (字节).
+# 10MB for clusters that need to store larger values.
+# 集群场景可设置为 10MB 以支持更大的值.
+max-request-bytes: 10485760
+
+# Maximum number of operations permitted in a transaction.
+# 单个事务中允许的最大操作数.
+# max-txn-ops: 128
+
+# -----------------------------------------------------------------------------
+# Timing Settings / 时间设置
+# -----------------------------------------------------------------------------
+
+# Time (in milliseconds) of a heartbeat interval.
+# 心跳间隔时间 (毫秒).
+# Lower values provide faster failure detection but increase network traffic.
+# 较低的值可以更快检测故障, 但会增加网络流量.
+heartbeat-interval: 100
+
+# Time (in milliseconds) for an election to timeout.
+# 选举超时时间 (毫秒).
+# Should be at least 5-10x heartbeat-interval.
+# 应至少为心跳间隔的 5-10 倍.
+# For cross-datacenter deployments, consider 5000-10000ms.
+# 跨数据中心部署时, 建议设置为 5000-10000ms.
+election-timeout: 1000
+
+# -----------------------------------------------------------------------------
+# Auto Compaction / 自动压缩
+# -----------------------------------------------------------------------------
+
+# Mode of auto compaction: 'periodic' or 'revision'.
+# 自动压缩模式: 'periodic' (按时间) 或 'revision' (按版本).
+# 'revision' is recommended for clusters with high write throughput.
+# 高写入吞吐量的集群建议使用 'revision' 模式.
+auto-compaction-mode: 'revision'
+
+# Retention for auto compaction.
+# 自动压缩的保留数量.
+# For 'revision' mode: number of revisions to retain.
+# revision 模式: 保留的版本数量.
+auto-compaction-retention: '10000'
+
+# -----------------------------------------------------------------------------
+# gRPC Settings / gRPC 设置
+# -----------------------------------------------------------------------------
+
+# Enable the grpc gateway for RESTful HTTP API.
+# 启用 gRPC 网关以支持 RESTful HTTP API.
+enable-grpc-gateway: true
+
+# Minimum interval that a client should wait before pinging server.
+# 客户端 ping 服务端的最小间隔.
+# Protects against clients that ping too frequently.
+# 防止客户端过于频繁地发送 ping.
+grpc-keepalive-min-time: '5s'
+
+# Frequency of server-to-client ping to check connection liveness.
+# 服务端检测客户端连接活跃性的 ping 间隔.
+# 0 to disable.
+# 设为 0 禁用.
+grpc-keepalive-interval: '2h'
+
+# Additional wait time before closing non-responsive connection.
+# 关闭无响应连接前的额外等待时间.
+grpc-keepalive-timeout: '20s'
+
+# -----------------------------------------------------------------------------
+# Logging Settings / 日志设置
+# -----------------------------------------------------------------------------
+
+# Log level: debug, info, warn, error, panic, fatal.
+# 日志级别: debug, info, warn, error, panic, fatal.
+log-level: 'info'
+
+# Log format: json, console.
+# 日志格式: json (结构化, 便于日志系统解析), console (人类可读).
+# log-format: 'json'
+
+# Log output targets.
+# 日志输出目标.
+# log-outputs:
+#   - '/var/log/etcd/etcd.log'
+
+# -----------------------------------------------------------------------------
+# Metrics Settings / 指标设置
+# -----------------------------------------------------------------------------
+
+# Level of detail for exported metrics.
+# 导出指标的详细程度.
+# - 'basic': Core metrics only.
+# - 'extensive': All available metrics (recommended for production).
+# - 'basic': 仅核心指标.
+# - 'extensive': 所有可用指标 (生产环境推荐).
+metrics: 'extensive'
+
+# List of URLs to listen on for metrics/health endpoints.
+# 监听指标/健康检查端点的 URL 列表.
+# Use a separate port for metrics to isolate from client traffic.
+# 使用独立端口隔离指标流量和客户端流量.
+listen-metrics-urls: 'http://0.0.0.0:2381'
+
+# -----------------------------------------------------------------------------
+# Cluster Integrity / 集群完整性
+# -----------------------------------------------------------------------------
+
+# Time interval between corruption check passes.
+# 数据一致性检查的时间间隔.
+# corrupt-check-time: '0s'
+
+# Time interval between compaction hash checks (leader checks followers).
+# 压缩哈希检查的时间间隔 (leader 检查 follower).
+# compact-hash-check-time: '1m'

@@ -1,0 +1,148 @@
+# =============================================================================
+# etcd Configuration - Single Node (Default)
+# etcd 配置 - 单节点 (默认)
+# =============================================================================
+# This configuration is ready to use out of the box.
+# 此配置开箱即用, 无需修改即可启动.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Basic Settings / 基本设置
+# -----------------------------------------------------------------------------
+
+# Human-readable name for this member.
+# 此成员的可读名称.
+name: 'default'
+
+# Path to the data directory.
+# 数据目录路径.
+data-dir: '/var/lib/etcd'
+
+# Path to the dedicated wal directory. If not set, etcd will use data-dir.
+# 专用 WAL 目录路径. 如果未设置, 将使用 data-dir.
+# Tip: Use a separate disk for better performance.
+# 提示: 使用独立磁盘可提升性能.
+# wal-dir: '/var/lib/etcd/wal'
+
+# -----------------------------------------------------------------------------
+# Network Settings / 网络设置
+# -----------------------------------------------------------------------------
+
+# List of URLs to listen on for client traffic.
+# 监听客户端请求的 URL 列表.
+listen-client-urls: 'http://127.0.0.1:2379'
+
+# List of this member's client URLs to advertise to the public.
+# 向外部公布的客户端 URL 列表.
+advertise-client-urls: 'http://127.0.0.1:2379'
+
+# List of URLs to listen on for peer traffic.
+# 监听集群节点间通信的 URL 列表.
+listen-peer-urls: 'http://127.0.0.1:2380'
+
+# List of this member's peer URLs to advertise to the rest of the cluster.
+# 向集群其他节点公布的 URL 列表.
+initial-advertise-peer-urls: 'http://127.0.0.1:2380'
+
+# -----------------------------------------------------------------------------
+# Cluster Settings / 集群设置
+# -----------------------------------------------------------------------------
+
+# Initial cluster configuration for bootstrapping.
+# 引导启动时的初始集群配置.
+initial-cluster: 'default=http://127.0.0.1:2380'
+
+# Initial cluster token for the etcd cluster during bootstrap.
+# 引导启动时的集群令牌, 用于区分不同集群.
+initial-cluster-token: 'etcd-cluster'
+
+# Initial cluster state ('new' or 'existing').
+# 初始集群状态 ('new' 新建集群, 'existing' 加入现有集群).
+initial-cluster-state: 'new'
+
+# -----------------------------------------------------------------------------
+# Storage Settings / 存储设置
+# -----------------------------------------------------------------------------
+
+# Maximum size of the backend database in bytes. 0 means default (2GB).
+# 后端数据库最大大小 (字节). 0 表示默认值 (2GB).
+# Raise an alarm when backend size exceeds this quota.
+# 当数据库大小超过此配额时会触发告警.
+quota-backend-bytes: 2147483648
+
+# Maximum size of a request in bytes.
+# 单次请求的最大大小 (字节).
+# Default: 1.5MB. Increase for large value scenarios.
+# 默认: 1.5MB. 如需存储大值可适当增加.
+max-request-bytes: 1572864
+
+# -----------------------------------------------------------------------------
+# Timing Settings / 时间设置
+# -----------------------------------------------------------------------------
+
+# Time (in milliseconds) of a heartbeat interval.
+# 心跳间隔时间 (毫秒).
+heartbeat-interval: 100
+
+# Time (in milliseconds) for an election to timeout.
+# 选举超时时间 (毫秒).
+# Recommended: 10x heartbeat-interval.
+# 建议: 心跳间隔的 10 倍.
+election-timeout: 1000
+
+# -----------------------------------------------------------------------------
+# Auto Compaction / 自动压缩
+# -----------------------------------------------------------------------------
+
+# Mode of auto compaction: 'periodic' or 'revision'.
+# 自动压缩模式: 'periodic' (按时间) 或 'revision' (按版本).
+# - periodic: Compact by time interval.
+# - revision: Compact by revision count.
+# - periodic: 按时间间隔压缩.
+# - revision: 按版本数量压缩.
+auto-compaction-mode: 'periodic'
+
+# Retention period for auto compaction.
+# 自动压缩的保留周期.
+# For 'periodic': duration string (e.g., '1h', '24h').
+# For 'revision': number of revisions (e.g., '1000').
+# periodic 模式: 时间字符串 (如 '1h', '24h').
+# revision 模式: 版本数量 (如 '1000').
+auto-compaction-retention: '1h'
+
+# -----------------------------------------------------------------------------
+# Logging Settings / 日志设置
+# -----------------------------------------------------------------------------
+
+# Log level: debug, info, warn, error, panic, fatal.
+# 日志级别: debug, info, warn, error, panic, fatal.
+log-level: 'info'
+
+# Log format: json, console.
+# 日志格式: json (结构化), console (人类可读).
+# log-format: 'json'
+
+# Log output targets. Can be 'default', 'stderr', 'stdout', or file paths.
+# 日志输出目标. 可选 'default', 'stderr', 'stdout' 或文件路径.
+# log-outputs:
+#   - '/var/log/etcd/etcd.log'
+
+# -----------------------------------------------------------------------------
+# gRPC Settings / gRPC 设置
+# -----------------------------------------------------------------------------
+
+# Enable the grpc gateway, which translates RESTful HTTP API into gRPC.
+# 启用 gRPC 网关, 将 RESTful HTTP API 转换为 gRPC.
+enable-grpc-gateway: true
+
+# -----------------------------------------------------------------------------
+# Metrics Settings / 指标设置
+# -----------------------------------------------------------------------------
+
+# Level of detail for exported metrics: 'basic' or 'extensive'.
+# 导出指标的详细程度: 'basic' (基础) 或 'extensive' (详细).
+# metrics: 'basic'
+
+# List of URLs to listen on for metrics/health endpoints.
+# 监听指标/健康检查端点的 URL 列表.
+# listen-metrics-urls: 'http://127.0.0.1:2381'

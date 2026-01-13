@@ -1,0 +1,64 @@
+# https://nfpm.goreleaser.com
+
+name: etcd
+arch: ${ARCH}
+version: ${VERSION}
+release: 1
+maintainer: kovacs
+description: Highly-available key value store for shared configuration and service discovery
+vendor: etcd-io
+homepage: https://etcd.io
+license: Apache-2.0
+
+contents:
+  # Binaries
+  - src: ./dist/bin/${ARCH}/etcd
+    dst: /usr/bin/etcd
+    file_info:
+      mode: 0755
+
+  - src: ./dist/bin/${ARCH}/etcdctl
+    dst: /usr/bin/etcdctl
+    file_info:
+      mode: 0755
+
+  - src: ./dist/bin/${ARCH}/etcdutl
+    dst: /usr/bin/etcdutl
+    file_info:
+      mode: 0755
+
+  # Systemd service (use /usr/lib for FHS compliance)
+  - src: ./dist/systemd/etcd.service
+    dst: /usr/lib/systemd/system/etcd.service
+    file_info:
+      mode: 0644
+
+  # Config files (marked as config to preserve user changes on upgrade)
+  - src: ./configs/etcd.yaml
+    dst: /etc/etcd/etcd.yaml
+    type: config|noreplace
+    file_info:
+      mode: 0644
+
+  - src: ./configs/etcd.cluster.yaml
+    dst: /etc/etcd/etcd.cluster.yaml
+    type: config|noreplace
+    file_info:
+      mode: 0644
+
+  # SSL directory
+  - dst: /etc/etcd/ssl
+    type: dir
+    file_info:
+      mode: 0755
+
+  # Data directory
+  - dst: /var/lib/etcd
+    type: dir
+    file_info:
+      mode: 0755
+
+scripts:
+  postinstall: ./scripts/postinstall.sh
+  preremove: ./scripts/preremove.sh
+  postremove: ./scripts/postremove.sh

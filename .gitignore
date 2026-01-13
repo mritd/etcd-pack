@@ -1,2 +1,19 @@
-*.run
-makeself*
+# Build artifacts
+dist/
+
+# Packages
+*.deb
+*.rpm
+*.apk
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+.claude/
